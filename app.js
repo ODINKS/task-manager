@@ -3,6 +3,7 @@ const {
   getAllTasks,
   markTaskComplete,
   deleteTask,
+  formatDate,
 } = require("./taskManager");
 const http = require("http");
 const fs = require("fs");
@@ -14,12 +15,19 @@ if (command === "add") {
   const title = process.argv[3];
   const description = process.argv[4];
   addTask(title, description);
+  const tasks = getAllTasks();
+  const task = tasks[tasks.length - 1];
+  console.log(`✓ Task added successfully!`);
+  console.log(`\nID: ${task.id}, Title: "${task.title}"`);
 } else if (command === "list") {
   const tasks = getAllTasks();
+  console.log("=== Your Tasks ===\n");
   tasks.forEach((task) => {
-    console.log(
-      `${task.id}. ${task.title} (${task.completed ? "Completed" : "Pending"})`
-    );
+    const taskStatus = task.completed ? "Completed ✓" : "Pending";
+    const formattedDate = formatDate(task.createdAt);
+    console.log(`[${task.id}] ${task.title} (${taskStatus})`);
+    console.log(`\n    Description: ${task.description}`);
+    console.log(`    Created: ${formattedDate}\n`);
   });
 } else if (command === "complete") {
   const taskId = parseInt(process.argv[3]);
